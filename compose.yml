@@ -1,0 +1,53 @@
+services:
+  # wsp service
+#  wspapp:
+#    container_name: wspapp
+#    image: wspapp:1.0.0
+#    build:
+#      context: ./be/wsp
+#      dockerfile: wsp.dockerfile
+#    ports:
+#      - 8000:8000
+#    depends_on:
+#      - dbflaskapp
+#      - pythonbase
+
+  # flask service
+  dbflaskapp:
+    container_name: dbflaskapp
+    image: dbflaskapp:1.0.0
+    build:
+      context: ./be/dbflask
+      dockerfile: dbflask.dockerfile
+    ports:
+      - 4000:4000
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+    depends_on:
+      - db
+      - pythonbase
+
+#python service
+  pythonbase:
+    container_name: pythonbase
+    image: pythonbase:1.0.0
+    build:
+      context: ./be
+      dockerfile: dockerfile.base
+
+# db service
+  db:
+    container_name: db
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+
+volumes:
+  pgdata: {}
